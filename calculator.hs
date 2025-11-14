@@ -17,7 +17,7 @@ import Data.Char
 type Env = [(String, Integer)]
 --
 -- a data type for expressions
--- made up from integer numbers, + and *
+-- made up from integer numbers, +,*,/,%,-, variables and expressions
 --
 data Expr = Num Integer
           | Add Expr Expr
@@ -82,30 +82,34 @@ eval env (Rem e1 e2) =
 -- Grammar rules:
 --
 -- expr ::= term exprCont
--- exprCont ::= '+' term exprCont | epsilon
+-- exprCont ::= '+' term exprCont | '-' term exprCont | epsilon
 
 -- term ::= factor termCont
--- termCont ::= '*' factor termCont | epsilon
+-- termCont ::= '*' factor termCont | '/' factor termCont | '%' factor termCont | epsilon
+-- factor ::= variable | natural | '(' expr ')'
+-- command ::= variable '=' expr | expr 
 
--- factor ::= natural | '(' expr ')'
+
+
 
 expr :: Parser Expr
 expr = do t <- term
           exprCont t
 
 
-statement :: Parser Expr 
-statement =
-        (do v <- identifier
+command :: Parser Expr 
+command =
+        (do v <- variable
             char '='
             e <- expr 
             return (Assign v e))
   <|> expr
 
-identifier :: Parser String 
-identifier = (do c <- satisfy isAlpha
-                 cs <- many (satisfy isAlphaNum)
-                 return (c:cs))
+variable :: Parser String 
+variable = (do 
+  c <- satisfy isAlpha
+  cs <- many (satisfy isAlphaNum)
+  return (c:cs))
 exprCont :: Expr -> Parser Expr
 exprCont acc = do char '+'
                   t <- term
@@ -135,7 +139,7 @@ factor :: Parser Expr
 factor =
       do n <- natural
          return (Num n)
-  <|> do v <- identifier
+  <|> do v <- variable
          return (Var v)
   <|> do char '('
          e <- expr
@@ -159,7 +163,7 @@ main
 calculator :: Env -> [String] -> IO ()
 calculator _ [] = return () 
 calculator env (l:ls) = 
-  case parse statement l of 
+  case parse command l of 
     [ (tree, "")] -> 
       let (val, newEnv) = eval env tree 
       in do print val 
@@ -176,15 +180,15 @@ calculator env (l:ls) =
 --      [ (tree, "") ] ->  show (eval tree)
 --    _ -> "parse error; try again"
 
+
+
+-- execute aceita uma lista de pares (env) e uma expressão 
 execute :: Env -> String -> (String, Env)
 execute env line = 
-  case parse statement line of
+  case parse command line of
     [(tree, "")] -> 
       let (val, newEnv) = eval env tree
       in (show val, newEnv)
     _ -> ("parse error; try again", env)
 
 
-
-
--- ESTUDAR O CÓDIGO 
