@@ -34,3 +34,14 @@ myelem :: Eq a => a -> [a] -> Bool
 myelem t (x:_) | t == x = True
 myelem t [] = False
 myelem t (x:xs) = myelem t xs
+
+
+-- 3.2 a) 
+leastDiv :: Integer -> Integer 
+leastDiv x = leastDivF 2 x
+
+leastDivF :: Integer -> Integer -> Integer 
+leastDivF d n 
+    | d * d == n = n -- sqrt(n) * sqrt(n) == n 
+    | n `mod` d == 0 = d  -- n / d = k 
+    | otherwise = leastDivF (d+1) n
