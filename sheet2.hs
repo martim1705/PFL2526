@@ -101,3 +101,18 @@ isPrime n = null [p | p <- [2..n-1], n `mod` p == 0]
 -- 2.12
 myconcat :: [[a]] -> [a]
 myconcat listOfList = [x | xs <- listOfList, x <- xs]
+
+myreplicate :: Int -> a -> [a]
+myreplicate r n = [n | _ <- [1..r] ]
+
+myPos :: [a] -> Integer -> a
+myPos list pos = head [n | (n,i) <- zip list [0..], pos == i]
+
+-- 2.13 a) 
+binom :: Integer -> Integer -> Integer 
+binom n k = product [1..n] `div` ((product [1..k]) * product [(n-k),(n-k-1)..1])
+
+-- 2.13 b)
+
+pascal :: Integer -> [[Integer]]
+pascal n = [[binom x y | y <- [0..x]] | x <- [0..n]]
