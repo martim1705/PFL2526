@@ -42,6 +42,22 @@ leastDiv x = leastDivF 2 x
 
 leastDivF :: Integer -> Integer -> Integer 
 leastDivF d n 
-    | d * d == n = n -- sqrt(n) * sqrt(n) == n 
+    | d * d > n = n -- sqrt(n) * sqrt(n) == n 
     | n `mod` d == 0 = d  -- n / d = k 
     | otherwise = leastDivF (d+1) n
+
+-- 3.2 b) 
+isPrimeFast :: Integer -> Bool
+isPrimeFast n  
+    | n <= 1 = False
+    | leastDiv n == n = True
+    | otherwise = False
+
+
+-- 3.3
+
+nub :: Eq a => [a] -> [a]
+nub [] = []
+nub (x:xs) = x : nub (filter (/=x) xs)
+
+
