@@ -47,13 +47,13 @@ leastDivF d n
     | otherwise = leastDivF (d+1) n
 
 -- 3.2 b) 
-isPrimeFast :: Integer -> Bool
-isPrimeFast n  
-    | n <= 1 = False
-    | leastDiv n == n = True
-    | otherwise = False
-
-
+-- isPrimeFast :: Integer -> Bool
+--isPrimeFast n  
+--    | n <= 1 = False
+--    | leastDiv n == n = True
+--    | otherwise = False
+--
+--
 -- 3.3
 
 nub :: Eq a => [a] -> [a]
@@ -113,3 +113,40 @@ fromBits :: [Int] -> Int
 fromBits [1] = 1 
 fromBits [0] = 0
 fromBits (x:xs) = x * (2 ^ (length (xs))) + fromBits xs
+
+
+-- 3.9 
+
+divisors :: Integer -> [Integer]
+divisors n = filter (\d -> n `mod` d == 0 ) [1..n]
+
+-- 3.10 
+isPrimeFast :: Integer -> Bool
+isPrimeFast n 
+    | n > 1 && all (\p -> n `mod` p /= 0) [2..floor (sqrt (fromIntegral n))] = True
+    | otherwise = False
+
+-- 3.12 
+
+fromBitsI :: [Int] -> Int 
+fromBitsI list = foldl (\acc bit -> acc * 2 + bit) 0 list 
+
+-- 3.13 
+
+group :: Eq a => [a] -> [[a]]
+group [] = [] 
+group (x:xs) = 
+    let first = x : takeWhile (== x) xs
+        rest = dropWhile (== x) xs 
+    in first : group rest
+
+-- 3.14 a) 
+intercalate :: a -> [a] -> [[a]]
+intercalate n [] = [[n]]
+intercalate n (x:xs) = (n:x:xs) : map (x:) (intercalate n xs) 
+
+-- 3.14 b) 
+permutations :: [a] -> [[a]]
+permutations [] = [[]]
+permutations (x:xs) = 
+    concatMap (intercalate x) (permutations xs)
