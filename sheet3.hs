@@ -61,3 +61,55 @@ nub [] = []
 nub (x:xs) = x : nub (filter (/=x) xs)
 
 
+-- 3.4 
+
+intersperse :: a -> [a] -> [a]
+intersperse _ [] = []
+intersperse _ [a] = [a]
+intersperse n (x:xs) = x : n : intersperse n xs
+
+
+-- 3.5 a) 
+insert :: Ord a => a -> [a] -> [a]
+insert n [] = [n]
+insert n (x:xs) 
+    | n <= x = n : x : xs
+    | otherwise = x : insert n xs
+
+-- 3.5 b) 
+isort :: Ord a => [a] -> [a] 
+isort [] = [] 
+isort (x:xs) = insert x ( isort xs) 
+
+-- 3.6 a) 
+
+merge :: Ord a => [a] -> [a] -> [a] 
+merge xs [] = xs
+merge [] ys = ys
+merge (x:xs) (y:ys) = if x <= y then x : merge xs (y:ys)
+    else y : merge (x:xs) ys
+
+-- 3.6 b)
+msort :: Ord a => [a] -> [a] 
+msort [] = []
+msort [a] = [a]
+msort list = merge (msort left) (msort right)
+    where (left, right) = splitAt (length list `div` 2) list
+
+
+-- 3.7 
+
+toBits :: Int -> [Int]
+toBits n = reverse (arraybits n)
+
+arraybits :: Int -> [Int]
+arraybits 0 = [0]
+arraybits 1 = [1] 
+arraybits n = n `mod` 2 : arraybits (n `div` 2)
+
+
+-- 3.8 
+fromBits :: [Int] -> Int
+fromBits [1] = 1 
+fromBits [0] = 0
+fromBits (x:xs) = x * (2 ^ (length (xs))) + fromBits xs
